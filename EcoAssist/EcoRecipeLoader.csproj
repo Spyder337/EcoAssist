@@ -11,46 +11,46 @@
 
   <ItemGroup>
     <Reference Include="Eco.Core">
-      <HintPath>base\Eco.Core.dll</HintPath>
+      <HintPath>libs\Eco.Core.dll</HintPath>
     </Reference>
     <Reference Include="Eco.Gameplay">
-      <HintPath>base\Eco.Gameplay.dll</HintPath>
+      <HintPath>libs\Eco.Gameplay.dll</HintPath>
     </Reference>
     <Reference Include="Eco.ModKit">
-      <HintPath>base\Eco.ModKit.dll</HintPath>
+      <HintPath>libs\Eco.ModKit.dll</HintPath>
     </Reference>
     <Reference Include="Eco.Mods">
-      <HintPath>base\Eco.Mods.dll</HintPath>
+      <HintPath>libs\Eco.Mods.dll</HintPath>
     </Reference>
     <Reference Include="Eco.Networking.ENet">
-      <HintPath>base\Eco.Networking.ENet.dll</HintPath>
+      <HintPath>libs\Eco.Networking.ENet.dll</HintPath>
     </Reference>
     <Reference Include="Eco.Plugins">
-      <HintPath>base\Eco.Plugins.dll</HintPath>
+      <HintPath>libs\Eco.Plugins.dll</HintPath>
     </Reference>
     <Reference Include="Eco.Shared">
-      <HintPath>base\Eco.Shared.dll</HintPath>
+      <HintPath>libs\Eco.Shared.dll</HintPath>
     </Reference>
     <Reference Include="Eco.Simulation">
-      <HintPath>base\Eco.Simulation.dll</HintPath>
+      <HintPath>libs\Eco.Simulation.dll</HintPath>
     </Reference>
     <Reference Include="Eco.Stats">
-      <HintPath>base\Eco.Stats.dll</HintPath>
+      <HintPath>libs\Eco.Stats.dll</HintPath>
     </Reference>
     <Reference Include="Eco.WebServer">
-      <HintPath>base\Eco.WebServer.dll</HintPath>
+      <HintPath>libs\Eco.WebServer.dll</HintPath>
     </Reference>
     <Reference Include="Eco.World">
-      <HintPath>base\Eco.World.dll</HintPath>
+      <HintPath>libs\Eco.World.dll</HintPath>
     </Reference>
     <Reference Include="Eco.WorldGenerator">
-      <HintPath>base\Eco.WorldGenerator.dll</HintPath>
+      <HintPath>libs\Eco.WorldGenerator.dll</HintPath>
     </Reference>
     <Reference Include="EcoServer">
-      <HintPath>base\EcoServer.dll</HintPath>
+      <HintPath>libs\EcoServer.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>base\Newtonsoft.Json.dll</HintPath>
+      <HintPath>libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
 
