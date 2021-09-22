@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcoAssist", "EcoAssist\EcoAssist.csproj", "{CF076FD9-21CF-424B-9646-042DC74E869C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcoRecipeLoader", "EcoRecipeLoader\EcoRecipeLoader.csproj", "{CF076FD9-21CF-424B-9646-042DC74E869C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcoCalc", "EcoCalc\EcoCalc.csproj", "{D600F50D-8E72-4199-9336-9A7A049E723B}"
 EndProject
