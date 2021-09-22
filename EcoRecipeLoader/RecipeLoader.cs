@@ -146,7 +146,7 @@ public class RecipeLoader : IModKitPlugin
 
     private JObject AssignTags()
     {
-        var tags = new Dictionary<string, HashSet<string>>();
+        var tags = new SortedDictionary<string, HashSet<string>>();
 
         foreach(var item in Item.AllItems)
         {
