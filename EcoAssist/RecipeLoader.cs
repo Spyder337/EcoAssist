@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using Eco.Core.Plugins.Interfaces;
 using Eco.Gameplay.Components;
 using Eco.Gameplay.DynamicValues;
@@ -92,7 +88,6 @@ public class RecipeLoader : IModKitPlugin
                 result["quantity"] = EvaluateDynamicValue(craftingElement.Quantity);
                 result["ingredients"] = new JObject();
                 result["products"] = new JObject();
-                continue;
             }
 
             result["products"][name] = EvaluateDynamicValue(craftingElement.Quantity);

@@ -6,11 +6,8 @@
 	  <OutputType>Library</OutputType>
 	  <LangVersion>preview</LangVersion>
 	  <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	  <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Eco.Core">
@@ -52,6 +49,19 @@
     <Reference Include="EcoServer">
       <HintPath>base\EcoServer.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>base\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="base\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="cd $(OutDir)&#xD;&#xA;del *.pdb&#xD;&#xA;del *.deps.json&#xD;&#xA;del Eco.*&#xD;&#xA;del EcoServer.dll" />
+  </Target>
 
 </Project>
