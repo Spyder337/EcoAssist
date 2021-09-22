@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Eco.Core.Plugins.Interfaces;
 using Eco.Gameplay.Components;
@@ -17,42 +18,24 @@ public class RecipeLoader : IModKitPlugin
 {
     private string _saveDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EcoRecipes");
     private string _usedSkill;
-    private User _testUser = User.CreateUser("debug", "debugSteamId", "debugSlgId", null, true); 
+    private User _testUser = User.CreateUser("debug", "debugSteamId", "debugSlgId", null, true);
 
     public RecipeLoader()
     {
         JToken result = new JObject();
-        result["Version"] = EcoVersion.Version;
-        result["Localization"] = new JObject();
-        foreach (SupportedLanguage language in Enum.GetValues(typeof(SupportedLanguage)))
-        {
-            if (!Localizer.IsNormalizedLanguage(language))
-                continue;
+        InitLocalizations(ref result);
 
-            Localizer.TrySetLanguage(language);
-            JObject localization = new JObject();
-            result["Localization"][language.GetLocDisplayName().ToString()] = localization;
-
-            foreach (Item item in Item.AllItems)
-            {
-                localization[item.Type.Name] = (string)item.DisplayName;
-            }
-
-            foreach (var recipe in RecipeFamily.AllRecipes)
-            {
-                localization[recipe.GetType().Name] = (string)recipe.DisplayName;
-            }
-        }
         Localizer.TrySetLanguage(SupportedLanguage.English);
         JObject recipes = new JObject();
+        result["Tags"] = AssignTags();
         result["Recipes"] = recipes;
+
         foreach (var recipe in RecipeFamily.AllRecipes)
         {
             recipes[recipe.GetType().Name] = ProcessRecipeType(recipe);
         }
-        using var f = File.Create(Path.Combine(_saveDir, "Recipes.json"));
-        using var sw = new StreamWriter(f);
-        sw.WriteLine(result);
+
+        WriteToDisk(result);
     }
 
     public string GetStatus()
@@ -66,7 +49,7 @@ public class RecipeLoader : IModKitPlugin
 
         _usedSkill = string.Empty;
         bool first = true;
-        Log.WriteLine(Localizer.DoStr($"Parsing recipe: {recipeFamily.DisplayName}"));
+        //Log.WriteLine(Localizer.DoStr($"Parsing recipe: {recipeFamily.DisplayName}"));
         
         foreach (var craftingElement in recipeFamily.Product)
         {
@@ -117,12 +100,10 @@ public class RecipeLoader : IModKitPlugin
         return result;
     }
 
-    /// <summary>
-    /// Converts Eco dynamic value to js
-    /// </summary>
     private string EvaluateDynamicValue(IDynamicValue value)
     {
         Log.Write(Localizer.DoStr($"Tested value is {value.GetType().Name}"));
+        
         if(value is ConstantValue)
         {
             return Localizer.DoStr($"{value.GetBaseValue}");
@@ -136,5 +117,91 @@ public class RecipeLoader : IModKitPlugin
             return Localizer.DoStr($"{mVal.GetBaseValue * 2}");
         }
         throw new Exception($"Can't evaluate value {value}");
+    }
+
+    private void InitLocalizations(ref JToken token)
+    {
+        token["Version"] = EcoVersion.Version;
+        token["Localization"] = new JObject();
+        foreach (SupportedLanguage language in Enum.GetValues(typeof(SupportedLanguage)))
+        {
+            if (!Localizer.IsNormalizedLanguage(language))
+                continue;
+
+            Localizer.TrySetLanguage(language);
+            JObject localization = new JObject();
+            token["Localization"][language.GetLocDisplayName().ToString()] = localization;
+
+            foreach (Item item in Item.AllItems)
+            {
+                localization[item.Type.Name] = (string)item.DisplayName;
+            }
+
+            foreach (var recipe in RecipeFamily.AllRecipes)
+            {
+                localization[recipe.GetType().Name] = (string)recipe.DisplayName;
+            }
+        }
+    }
+
+    private JObject AssignTags()
+    {
+        var tags = new Dictionary<string, HashSet<string>>();
+
+        foreach(var item in Item.AllItems)
+        {
+            foreach(var tag in item.Tags())
+            {
+                var tagName = tag.DisplayName.ToString();
+                var name = item.DisplayName.ToString();
+                if (tagName == "Currency")
+                    continue;
+                if (!tags.ContainsKey(tagName))
+                {
+                    tags.Add(tagName, new HashSet<string>() { name });
+                }
+                else
+                {
+                    tags[tagName].Add(name);
+                }
+            }
+        }
+
+        foreach(var block in BlockItem.AllItems)
+        {
+            foreach (var tag in block.Tags())
+            {
+                var tagName = tag.DisplayName.ToString();
+                var name = block.DisplayName.ToString();
+                if (tagName == "Currency")
+                    continue;
+                if (!tags.ContainsKey(tagName))
+                {
+                    tags.Add(tagName, new HashSet<string>() { name });
+                }
+                else
+                {
+                    tags[tagName].Add(name);
+                }
+            }
+        }
+
+        var jsonString = JsonConvert.SerializeObject(tags);
+        return JsonConvert.DeserializeObject<JObject>(jsonString);
+    }
+
+    private void WriteToDisk(JToken token)
+    {
+        try
+        {
+            using var f = File.Create(Path.Combine(_saveDir, "Recipes.json"));
+            using var sw = new StreamWriter(f);
+            sw.WriteLine(token);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteErrorLineLocStr($"Error writing to the file.");
+            Log.WriteErrorLineLocStr($"{ex.Message}");
+        }
     }
 }
