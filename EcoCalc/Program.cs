@@ -1,6 +1,4 @@
-﻿
-using EcoCalc;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EcoCalc
@@ -62,6 +60,16 @@ namespace EcoCalc
             {
                 _recipes.Add(pair.Key, pair.Value);
             }
+        }
+
+        private static Dictionary<string, float> GetRecipeCost(Recipe recipe)
+        {
+            return new Dictionary<string, float>();
+        }
+
+        private static void GetRecipeCostHelper(Recipe recipe, ref Dictionary<string, float> items)
+        {
+
         }
     }
 }

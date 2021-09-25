@@ -11,6 +11,7 @@
 *.sln.docstates
 EcoRecipeLoader/libs/Eco.*
 EcoRecipeLoader/libs/EcoServer.dll
+EcoRecipeLoader/libs/__core__/
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
