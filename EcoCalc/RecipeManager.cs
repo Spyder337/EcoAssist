@@ -51,6 +51,17 @@ namespace EcoCalc
             }
         }
 
+        public Dictionary<string, float> CraftRecipe(string recipeName, int amount)
+        {
+            var results = CraftRecipe(recipeName);
+            var itemNames = results.Keys;
+            foreach(var item in itemNames)
+            {
+                results[item] *= amount;
+            }
+            return results;
+        }
+
         public Dictionary<string, float> CraftRecipe(string recipeName)
         {
             if (!RecipesByName.ContainsKey(recipeName))
@@ -78,7 +89,7 @@ namespace EcoCalc
             return itemQuantities;
         }
 
-        public void CraftRecipe(Recipe recipe, ref Dictionary<string, float> itemQuantities, float times)
+        private void CraftRecipe(Recipe recipe, ref Dictionary<string, float> itemQuantities, float times)
         {
             //Loop through current recipes
             foreach (var recipeItem in recipe.Ingredients)
@@ -86,13 +97,13 @@ namespace EcoCalc
                 //If the item does not have a recipe add cost
                 if (!RecipesByName.ContainsKey(recipeItem.Name))
                 {
-                    if (itemQuantities.ContainsKey(recipeItem.Name))
+                    if (!itemQuantities.ContainsKey(recipeItem.Name))
                     {
                         itemQuantities.Add(recipeItem.Name, recipeItem.Quantity * times);
                     }
                     else
                     {
-                        itemQuantities[recipeItem.Name] = recipeItem.Quantity * times;
+                        itemQuantities[recipeItem.Name] += recipeItem.Quantity * times;
                     }
                 }
                 //Otherwise recursively go down the crafting cost.

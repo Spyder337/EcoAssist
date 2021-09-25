@@ -24,7 +24,7 @@ namespace EcoCalc
             bool failed = false;
             if(args.Length == 0)
             {
-                res = _recipeManager.CraftRecipe("Ashlar Basalt");
+                res = _recipeManager.CraftRecipe("Reinforced Concrete");
             }
             else if(args.Length == 1)
             {
@@ -36,6 +36,22 @@ namespace EcoCalc
                 else
                 {
                     res = _recipeManager.CraftRecipe(args[0]);
+                }
+            }
+            else if(args.Length == 2)
+            {
+                if (!_recipeManager.RecipesByName.ContainsKey(args[0]))
+                {
+                    failed = true;
+                    Console.WriteLine($"Error! {args[0]} is not a valid item name.");
+                }
+                else
+                {
+                    if (!int.TryParse(args[1], out int amount))
+                    {
+                        Console.WriteLine($"Error! Second argument must be an integer.");
+                    }
+                    res = _recipeManager.CraftRecipe(args[0], amount);
                 }
             }
             if (!failed)
