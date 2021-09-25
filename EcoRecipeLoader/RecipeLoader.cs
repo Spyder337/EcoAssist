@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using Eco.Core.Plugins.Interfaces;
-using Eco.Gameplay.Components;
 using Eco.Gameplay.DynamicValues;
 using Eco.Gameplay.Items;
-using Eco.Gameplay.Objects;
 using Eco.Gameplay.Players;
-using Eco.Mods.TechTree;
 using Eco.Shared;
 using Eco.Shared.Localization;
 using Eco.Shared.Utils;
-using EcoRecipeLoader;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static EcoRecipeLoader.RecipeLoaderHelper;
+
 namespace EcoRecipeLoader;
 
 public enum CraftingTable
@@ -84,6 +81,7 @@ public class RecipeLoader : IModKitPlugin
 
     private User _testUser = User.CreateUser("debug", "debugSteamId", "debugSlgId", null, true);
     private int _currItemId = 0;
+    private int _currRecipeId = 0;
     private HashSet<string> _itemNames = new();
     private Dictionary<string, int> _itemByIdDict = new();
     private Dictionary<CraftingTable, List<EcoRecipeLoader.Recipe>> _recipeDict = new();
@@ -113,6 +111,8 @@ public class RecipeLoader : IModKitPlugin
     private void ProcessRecipeType(RecipeFamily recipeFamily)
     {
         var recipe = new EcoRecipeLoader.Recipe();
+        recipe.Name = recipeFamily.RecipeName;
+        recipe.Id = _currRecipeId++;
         bool first = true;
         recipe.Table = GetTableType(GetTableName(ref recipeFamily));
 
