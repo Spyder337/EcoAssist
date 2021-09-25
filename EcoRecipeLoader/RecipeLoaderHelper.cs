@@ -1,4 +1,4 @@
-﻿namespace EcoAssist;
+﻿namespace EcoRecipeLoader;
 
 internal static class RecipeLoaderHelper
 {

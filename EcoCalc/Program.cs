@@ -5,71 +5,21 @@ namespace EcoCalc
 {
     static class Program
     {
-        private static readonly string _saveDir;
-        private static readonly string _fileDir;
-        private static string _ecoVersion;
-        private static SortedDictionary<string, string[]> _tags;
-        private static SortedDictionary<string, Recipe> _recipes;
+        private static string _saveDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EcoRecipes");
+        private static readonly string _recipesFile = Path.Combine(_saveDir, "Recipes.json");
+        private static readonly string _tagsFile = Path.Combine(_saveDir, "Tags.json");
+        private static readonly string _localizationsFile = Path.Combine(_saveDir, "Localizations.json");
+        private static readonly string _ecoVersion;
 
         static Program()
         {
-            _saveDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EcoRecipes");
-            _fileDir = Path.Combine(_saveDir, "Recipes.json");
+
         }
 
         public static void Main()
         {
-            InitProgram();
-        }
-
-        private static void InitProgram()
-        {
-
-            var token = ReadRecipeFile();
-            _ecoVersion = token["Version"].Value<string>();
-            ParseTokens(token["Tags"], token["Recipes"]);
-
-            Console.WriteLine($"Eco Version: {_ecoVersion}");
-            Console.WriteLine($"Tags: {_tags.Count}");
-            Console.WriteLine($"Recipes: {_recipes.Count}");
-            Console.WriteLine();
-        }
-
-        private static JObject ReadRecipeFile()
-        {
-            try
-            {
-                using var f = File.OpenRead(_fileDir);
-                using var sr = new StreamReader(f);
-                var jsonText = sr.ReadToEnd();
-                return JsonConvert.DeserializeObject<JObject>(jsonText);
-            }
-            catch(Exception ex)
-            {
-                return new JObject();
-            }
-            return new JObject();
-        }
-
-        private static void ParseTokens(JToken tagsToken, JToken recToken)
-        {
-            _tags = JsonConvert.DeserializeObject<SortedDictionary<string, string[]>>(tagsToken.ToString());
-            var recipes = JsonConvert.DeserializeObject<Dictionary<string, Recipe>>(recToken.ToString());
-            _recipes = new SortedDictionary<string, Recipe>();
-            foreach(var pair in recipes)
-            {
-                _recipes.Add(pair.Key, pair.Value);
-            }
-        }
-
-        private static Dictionary<string, float> GetRecipeCost(Recipe recipe)
-        {
-            return new Dictionary<string, float>();
-        }
-
-        private static void GetRecipeCostHelper(Recipe recipe, ref Dictionary<string, float> items)
-        {
 
         }
+
     }
 }
