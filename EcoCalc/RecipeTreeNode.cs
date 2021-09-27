@@ -20,36 +20,44 @@ namespace EcoCalc
         public RecipeItem Item { get; set; }
         public double Quantity { get; set; }
 
-        public RecipeTreeNode(Recipe itemRecipe, double quantity = 1, RecipeTreeNode parent = null)
-        {
-            Name = itemRecipe.Name;
-            ItemRecipe = itemRecipe;
-            Parent = parent;
-            Quantity = quantity;
-            Item = ItemRecipe.MainProduct;
-            foreach (var item in ItemRecipe.Ingredients)
-            {
-                AddChild(item,  item.Quantity);
-            }
-        }
-
-        public RecipeTreeNode(RecipeItem item, double quantity = 1, RecipeTreeNode parent = null)
+        public RecipeTreeNode(RecipeItem item, double quantity, RecipeTreeNode parent = null)
         {
             Name = item.Name;
+            if(RecipeManager.HasRecipe(item.Name))
+                ItemRecipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[item.Name]);
+            Parent = parent;
             Item = item;
             Quantity = quantity;
-            Parent = parent;
+
+            if (ItemRecipe == null) return;
+
+            foreach (var ingredient in ItemRecipe.Ingredients)
+            {
+                double numCrafts;
+                if (RecipeManager.HasRecipe(ingredient.Name))
+                {
+                    var newRecipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[ingredient.Name]);
+                    numCrafts = ingredient.Quantity / ItemRecipe.MainProduct.Quantity;
+                }
+                else
+                {
+                    numCrafts = ingredient.Quantity / ItemRecipe.MainProduct.Quantity;
+                }
+                Children.Add(new RecipeTreeNode(ingredient, numCrafts * quantity, this));
+            }
         }
 
         private void ProcessRecipe(ref Dictionary<string, RecipeItem> recipes)
         {
-            if (!IsRoot && Parent.IsRoot || IsValidSubRecipe(ItemRecipe))
+            if (!IsRoot || IsValidSubRecipe(ItemRecipe))
             {
                 string name = Name;
                 if (ItemRecipe?.MainProduct.Name != null) name = ItemRecipe.MainProduct.Name;
                 if (!recipes.ContainsKey(name))
                 {
-                    recipes.Add(name, Item);
+                    var updatedItem = Item;
+                    updatedItem.Quantity = Quantity;
+                    recipes.Add(name, updatedItem);
                 }
                 else
                 {
@@ -59,18 +67,16 @@ namespace EcoCalc
 
             if (!IsRoot && !Parent.IsRoot) return;
 
-            Console.WriteLine($"Item: {Name}");
             if (IsRoot)
             {
+                Console.WriteLine($"Item: {Name}");
                 Console.WriteLine($"Quantity: {Quantity}");
                 Console.WriteLine();
                 Console.WriteLine("Resource Totals: ");
-                Console.WriteLine();
             }
             else
             {
-                Console.WriteLine($"Quantity: {Quantity}");
-                Console.WriteLine();
+                Console.WriteLine($"{Name, -40} {Quantity, -40}");
             }
         }
 
@@ -81,17 +87,17 @@ namespace EcoCalc
             return false;
         }
 
-        public void ProcessRecipe(ref Dictionary<string, RecipeItem> recipes, int maxDepth = 1, int currentDepth = 0)
+        public void ProcessRecipe(ref Dictionary<string, RecipeItem> recipes, int maxDepth, int currentDepth = 0, bool ignoreDepth = true)
         {
             ProcessRecipe(ref recipes);
 
             foreach (var child in Children)
             {
-                if (maxDepth == 0)
+                if (ignoreDepth)
                 {
-                    child.ProcessRecipe(ref recipes, maxDepth);
+                    child.ProcessRecipe(ref recipes, maxDepth, ignoreDepth: true);
                 }
-                if (currentDepth < maxDepth)
+                else if (currentDepth < maxDepth)
                 {
                     child.ProcessRecipe(ref recipes, maxDepth, currentDepth + 1);
                 }
@@ -99,28 +105,19 @@ namespace EcoCalc
 
             if (IsRoot)
             {
+                Console.WriteLine();
                 Console.WriteLine($"Full crafting list: ");
                 Console.WriteLine($"{"Item",-40} Quantity");
                 foreach (var item in recipes)
                 {
-                    Console.WriteLine($"{item.Key, -40} {item.Value.Quantity}");
+                    Console.WriteLine($"{item.Key, -40} {item.Value.Quantity, -40:F}");
                 }
             }
         }
-
-        public void AddChild(RecipeItem recipeItem, double quantity)
+        
+        public override string ToString()
         {
-            if (RecipeManager.RecipesByName.ContainsKey(recipeItem.Name))
-            {
-                var newRecipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[recipeItem.Name]);
-                var newQuantity = RecipeManager.GetUpgradeValue(RecipeManager.TableUpgrades[newRecipe.Table]) *
-                    newRecipe.MainProduct.Quantity / Quantity;
-                Children.Add(new RecipeTreeNode(newRecipe, newQuantity, this));
-            }
-            else
-            {
-                Children.Add(new RecipeTreeNode(recipeItem, recipeItem.Quantity, this));
-            }
+            return Name;
         }
     }
 }
