@@ -2,7 +2,7 @@
   "profiles": {
     "EcoCalc": {
       "commandName": "Project",
-      "commandLineArgs": "\"Laser\" -a 1 -rl 1"
+      "commandLineArgs": "\"Asphalt Concrete\" -a 2 -rl 2"
     }
   }
 }

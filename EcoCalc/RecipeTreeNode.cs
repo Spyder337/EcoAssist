@@ -45,15 +45,15 @@ namespace EcoCalc
         {
             if (!IsRoot && Parent.IsRoot || IsValidSubRecipe(ItemRecipe))
             {
-                var updatedItem = Item;
-                updatedItem.Quantity = Quantity;
-                if (!recipes.ContainsKey(Name))
+                string name = Name;
+                if (ItemRecipe?.MainProduct.Name != null) name = ItemRecipe.MainProduct.Name;
+                if (!recipes.ContainsKey(name))
                 {
-                    recipes.Add(Name, updatedItem);
+                    recipes.Add(name, Item);
                 }
                 else
                 {
-                    recipes[Name].Quantity += Quantity;
+                    recipes[name].Quantity += Quantity;
                 }
             }
 
@@ -69,7 +69,7 @@ namespace EcoCalc
             }
             else
             {
-                Console.WriteLine($"Quantity: {Quantity / Parent.ItemRecipe.MainProduct.Quantity}");
+                Console.WriteLine($"Quantity: {Quantity}");
                 Console.WriteLine();
             }
         }
@@ -77,7 +77,7 @@ namespace EcoCalc
         private bool IsValidSubRecipe(Recipe itemRecipe)
         {
             if (itemRecipe == null) return true;
-            if (RecipeManager.Tags["Ingredient"].Contains(itemRecipe.Name)) return true;
+            if (RecipeManager.Tags["Ingredient"].Contains(itemRecipe.MainProduct.Name)) return true;
             return false;
         }
 
@@ -113,11 +113,13 @@ namespace EcoCalc
             if (RecipeManager.RecipesByName.ContainsKey(recipeItem.Name))
             {
                 var newRecipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[recipeItem.Name]);
-                Children.Add(new RecipeTreeNode(newRecipe, Quantity * quantity, this));
+                var newQuantity = RecipeManager.GetUpgradeValue(RecipeManager.TableUpgrades[newRecipe.Table]) *
+                    newRecipe.MainProduct.Quantity / Quantity;
+                Children.Add(new RecipeTreeNode(newRecipe, newQuantity, this));
             }
             else
             {
-                Children.Add(new RecipeTreeNode(recipeItem, Quantity * quantity, this));
+                Children.Add(new RecipeTreeNode(recipeItem, recipeItem.Quantity, this));
             }
         }
     }

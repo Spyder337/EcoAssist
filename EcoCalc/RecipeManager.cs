@@ -5,17 +5,34 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace EcoCalc
 {
     public static class RecipeManager
     {
+
+        public static readonly string TableUgradesPath = Path.Combine(Program.SaveDir, "TableUpgrades.json");
         public static Dictionary<CraftingTable, List<Recipe>> RecipesByTable { get; set; } = new();
         public static Dictionary<string, Recipe> RecipesByName { get; set; } = new();
         public static Dictionary<int, Recipe> RecipeById { get; set; } = new();
         public static Dictionary<string, List<string>> Tags { get; set; } = new();
+        public static SortedDictionary<CraftingTable, int> TableUpgrades { get; set; } = new();
         [Range(1, 3)]
         public static int RecipeLevel = 1;
+        
+        public static double GetUpgradeValue(int upgradeLevel)
+        {
+            return upgradeLevel switch
+            {
+                1 => .1,
+                2 => .25,
+                3 => .40,
+                4 => .45,
+                5 => .5,
+                _ => 1
+            };
+        }
 
         public static Recipe GetActiveRecipe(Recipe recipe)
         {
@@ -87,6 +104,32 @@ namespace EcoCalc
             catch
             {
                 Console.WriteLine("Error reading in tags.");
+            }
+
+            try
+            {
+                if (File.Exists(TableUgradesPath))
+                {
+                    using var f = File.OpenRead(TableUgradesPath);
+                    using var sr = new StreamReader(f);
+                    var json = sr.ReadToEnd();
+                    TableUpgrades = JsonConvert.DeserializeObject<SortedDictionary<CraftingTable, int>>(json);
+                }
+                else
+                {
+                    foreach (var craftingTable in RecipesByTable)
+                    {
+                        TableUpgrades.Add(craftingTable.Key, 0);
+                    }
+                    using var f = File.Create(TableUgradesPath);
+                    using var sw = new StreamWriter(f);
+                    var json = JsonConvert.SerializeObject(TableUpgrades, Formatting.Indented);
+                    sw.WriteLine(json);
+                }
+            }
+            catch
+            {
+                Console.WriteLine($"Error! Failed to load {TableUgradesPath}");
             }
         }
     }

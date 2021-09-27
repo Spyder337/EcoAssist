@@ -52,6 +52,7 @@ namespace EcoCalc
             {
                 Console.WriteLine("Error! Invalid recipe or command usage.");
                 Console.WriteLine("Use -h or --help for command help.");
+                return;
             }
 
             if (args.Length > 1)
