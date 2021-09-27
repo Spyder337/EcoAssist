@@ -10,5 +10,10 @@ namespace EcoRecipeLoader
         public RecipeItem MainProduct;
         public List<RecipeItem> Products { get; set; } = new();
         public List<RecipeItem> Ingredients { get; set; } = new();
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

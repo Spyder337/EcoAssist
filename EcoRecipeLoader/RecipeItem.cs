@@ -12,6 +12,11 @@ namespace EcoRecipeLoader
         public string Tag { get; set; } = string.Empty;
         public bool IsTag { get; set; } = false;
         public string Name { get; set; } = string.Empty;
-        public float Quantity { get; set; } = 1;
+        public double Quantity { get; set; } = 1;
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
