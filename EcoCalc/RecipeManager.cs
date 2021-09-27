@@ -8,21 +8,14 @@ using System.Linq;
 
 namespace EcoCalc
 {
-    public class RecipeManager
+    public static class RecipeManager
     {
         public static Dictionary<CraftingTable, List<Recipe>> RecipesByTable { get; set; } = new();
         public static Dictionary<string, Recipe> RecipesByName { get; set; } = new();
         public static Dictionary<int, Recipe> RecipeById { get; set; } = new();
         public static Dictionary<string, List<string>> Tags { get; set; } = new();
+        [Range(1, 3)]
         public static int RecipeLevel = 1;
-        [Range(1,3)]
-        public static string RecipeLevelString => GetLevelString();
-
-        private static string GetLevelString()
-        {
-            if (RecipeLevel == 1) return string.Empty;
-            else return $"Lv{RecipeLevel}";
-        }
 
         public static Recipe GetActiveRecipe(Recipe recipe)
         {
@@ -56,12 +49,12 @@ namespace EcoCalc
             return RecipesByTable[table].Any(r => r.Name == recipeName);
         }
 
-        public RecipeManager()
+        static RecipeManager()
         {
             LoadRecipes();
         }
 
-        private void LoadRecipes()
+        private static void LoadRecipes()
         {
             try
             {
@@ -95,11 +88,6 @@ namespace EcoCalc
             {
                 Console.WriteLine("Error reading in tags.");
             }
-        }
-
-        internal Dictionary<string, float> CraftRecipe(string recipeName, int amount, IRecipeStrategy strategy)
-        {
-            return strategy.CalculateCost(recipeName, amount);
         }
     }
 }

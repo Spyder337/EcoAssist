@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EcoCalc": {
+      "commandName": "Project",
+      "commandLineArgs": "\"Laser\" -a 8 -rl 1"
+    }
+  }
+}

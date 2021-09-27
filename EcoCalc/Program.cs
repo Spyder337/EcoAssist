@@ -15,97 +15,88 @@ namespace EcoCalc
         public static readonly string TagsFile = Path.Combine(SaveDir, "Tags.json");
         public static readonly string LocalizationsFile = Path.Combine(SaveDir, "Localizations.json");
         public static readonly string EcoVersion;
+        public static readonly Dictionary<string, string> RawToAlias = new()
+        {
+            {"--amount", "-a"},
+            {"--recipe-level", "-rl"},
+            {"--max-depth", "-md"}
+        };
+        public static readonly Dictionary<string, string> AliasToRaw = new()
+        {
+            {"-a", "--amount"},
+            {"-rl", "--recipe-level"},
+            {"-md", "--max-depth"}
+        };
+        public static readonly Dictionary<string, int> NumofArgs = new()
+        {
+            {"-a", 1},
+            {"-rl", 1},
+            {"-md", 1}
+        };
 
-        private static RecipeManager _recipeManager;
+        public static readonly Dictionary<string, int> ArgValues = new()
+        {
+            {"-a", 1},
+            {"-rl", 1},
+            {"-md", 1}
+        };
 
         public static void Main(params string[] args)
         {
-            _recipeManager = new RecipeManager();
             string defaultRecipe = "Laser";
-            //Dictionary<string, float> res = new();
-            RecipeTreeNode root = null;
-            bool failed = false;
-            if(args.Length == 0)
+            RecipeTreeNode root;
+            string recipeName = args.Length > 0 ? args[0] : defaultRecipe;
+
+            if (!RecipeManager.HasRecipe(recipeName))
             {
-                /*
-                RecipeManager.RecipeLevel = 1;
-                res = RecipeManager.CraftRecipe(defaultRecipe, 1, new BasicResourcesStrategy());
-                */
-                RecipeManager.RecipeLevel = 2;
-                var recipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[defaultRecipe]);
-                root = new RecipeTreeNode(recipe);
-                //root.ProcessRecipe();
-                //root.ProcessVerbiseRecipe();
+                Console.WriteLine("Error! Invalid recipe or command usage.");
+                Console.WriteLine("Use -h or --help for command help.");
             }
-            else if(args.Length == 1)
+
+            if (args.Length > 1)
             {
-                if (!RecipeManager.RecipesByName.ContainsKey(args[0]))
-                {
-                    failed = true;
-                    Console.WriteLine($"Error! {args[0]} is not a valid item name.");
-                }
-                else
-                {
-                    var recipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[args[0]]);
-                    root = new RecipeTreeNode(recipe);
-                    //res = RecipeManager.CraftRecipe(args[0], 1, new BasicResourcesStrategy());
-                }
+                ParseArguments(args[1..]);
             }
-            else if(args.Length == 2)
+
+            RecipeManager.RecipeLevel = ArgValues["-rl"];
+            root = new RecipeTreeNode(RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[recipeName]), ArgValues["-a"]);
+            root.ProcessRecipe(ArgValues["-md"]);
+        }
+
+        private static void ParseArguments(string[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
             {
-                if (!RecipeManager.RecipesByName.ContainsKey(args[0]))
+                var numArgs = ParseArgument(args[i]);
+                i += numArgs;
+                if (int.TryParse(args[i], out int result))
                 {
-                    failed = true;
-                    Console.WriteLine($"Error! {args[0]} is not a valid item name.");
-                }
-                else
-                {
-                    if (!int.TryParse(args[1], out int amount))
-                    {
-                        Console.WriteLine($"Error! Second argument must be an integer.");
-                    }
-                    //res = _recipeManager.CraftRecipe(args[0], amount, new BasicResourcesStrategy());
-                    var recipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[args[0]]);
-                    root = new RecipeTreeNode(recipe, amount);
+                    ArgValues[GetAsAlias(args[i - numArgs])] = result;
                 }
             }
-            else if(args.Length == 4)
+        }
+
+        private static string GetAsAlias(string name)
+        {
+            if (AliasToRaw.ContainsKey(name))
             {
-                if (!RecipeManager.RecipesByName.ContainsKey(args[0]))
-                {
-                    failed = true;
-                    Console.WriteLine($"Error! {args[0]} is not a valid item name.");
-                    return;
-                }
-                if (!int.TryParse(args[1], out int amount))
-                {
-                    failed = true;
-                    Console.WriteLine($"Error! Second argument must be an integer.");
-                    return;
-                }
-                if(args[2] == "--recipe-level" ||  args[2] == "-rl")
-                {
-                    if(!int.TryParse(args[3], out RecipeManager.RecipeLevel)){
-                        Console.WriteLine($"Error! Recipe level must be a valid integer between 1 and 3");
-                    }
-                }
-                //res = _recipeManager.CraftRecipe(args[0], amount, new BasicResourcesStrategy());
-                var recipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[args[0]]);
-                root = new RecipeTreeNode(recipe, amount);
+                return name;
             }
-            root.ProcessVerbiseRecipe();
-            /*
-            if (!failed)
+            if (RawToAlias.ContainsKey(name))
             {
-                string itemName = args.Length == 0 ? defaultRecipe : args[0];
-                Console.WriteLine($"Loaded recipe: {itemName}\n");
-                Console.WriteLine($"Resources:");
-                foreach (var item in res)
-                {
-                    Console.WriteLine($"\t{item.Key} : {item.Value}");
-                }
+                return RawToAlias[name];
             }
-            */
+            Console.WriteLine("Error! Invalid command argument. Use -h or --help for command usage.");
+            return string.Empty;
+        }
+
+        private static int ParseArgument(string name)
+        {
+            int numArgs = -1;
+            if (name == string.Empty)
+                return numArgs;
+            numArgs = NumofArgs[GetAsAlias(name)];
+            return numArgs;
         }
     }
 }

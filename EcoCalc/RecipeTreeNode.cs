@@ -39,24 +39,32 @@ namespace EcoCalc
             Parent = parent;
         }
 
-        public void ProcessRecipe(double quantity = 1)
+        private void ProcessRecipe()
         {
-            Console.WriteLine($"Item: {Name} : {Quantity}");
-            Console.WriteLine($"Quantity: {Quantity}");
-            Console.WriteLine();
-            if (Parent == null)
+            Console.WriteLine($"Item: {Name}");
+            if (IsRoot)
             {
+                Console.WriteLine($"Quantity: {Quantity}");
+                Console.WriteLine();
                 Console.WriteLine("Resource Totals: ");
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine($"Quantity: {Quantity / Parent.ItemRecipe.MainProduct.Quantity}");
                 Console.WriteLine();
             }
         }
 
-        public void ProcessVerbiseRecipe(double quantity = 1)
+        public void ProcessRecipe(int maxDepth = 1, int currentDepth = 0)
         {
-            ProcessRecipe(quantity);
-            foreach (var child in Children)
+            ProcessRecipe();
+            if (currentDepth < maxDepth)
             {
-                child.ProcessRecipe(quantity);
+                foreach (var child in Children)
+                {
+                    child.ProcessRecipe(maxDepth, currentDepth + 1);
+                }
             }
         }
 
