@@ -2,7 +2,7 @@
   "profiles": {
     "EcoCalc": {
       "commandName": "Project",
-      "commandLineArgs": "\"Laser\" -a 8 -rl 1"
+      "commandLineArgs": "\"Laser\" -a 1 -rl 1"
     }
   }
 }

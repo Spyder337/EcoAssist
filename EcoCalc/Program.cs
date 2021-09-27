@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using EcoCalc.RecipeStrategies;
+using EcoRecipeLoader;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -38,7 +39,7 @@ namespace EcoCalc
         {
             {"-a", 1},
             {"-rl", 1},
-            {"-md", 1}
+            {"-md", 0}
         };
 
         public static void Main(params string[] args)
@@ -60,7 +61,8 @@ namespace EcoCalc
 
             RecipeManager.RecipeLevel = ArgValues["-rl"];
             root = new RecipeTreeNode(RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[recipeName]), ArgValues["-a"]);
-            root.ProcessRecipe(ArgValues["-md"]);
+            var condensedRecipes = new Dictionary<string, RecipeItem>();
+            root.ProcessRecipe(ref condensedRecipes, ArgValues["-md"]);
         }
 
         private static void ParseArguments(string[] args)

@@ -1,8 +1,10 @@
 ﻿using EcoRecipeLoader;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,8 +41,24 @@ namespace EcoCalc
             Parent = parent;
         }
 
-        private void ProcessRecipe()
+        private void ProcessRecipe(ref Dictionary<string, RecipeItem> recipes)
         {
+            if (!IsRoot && Parent.IsRoot || IsValidSubRecipe(ItemRecipe))
+            {
+                var updatedItem = Item;
+                updatedItem.Quantity = Quantity;
+                if (!recipes.ContainsKey(Name))
+                {
+                    recipes.Add(Name, updatedItem);
+                }
+                else
+                {
+                    recipes[Name].Quantity += Quantity;
+                }
+            }
+
+            if (!IsRoot && !Parent.IsRoot) return;
+
             Console.WriteLine($"Item: {Name}");
             if (IsRoot)
             {
@@ -56,14 +74,36 @@ namespace EcoCalc
             }
         }
 
-        public void ProcessRecipe(int maxDepth = 1, int currentDepth = 0)
+        private bool IsValidSubRecipe(Recipe itemRecipe)
         {
-            ProcessRecipe();
-            if (currentDepth < maxDepth)
+            if (itemRecipe == null) return true;
+            if (RecipeManager.Tags["Ingredient"].Contains(itemRecipe.Name)) return true;
+            return false;
+        }
+
+        public void ProcessRecipe(ref Dictionary<string, RecipeItem> recipes, int maxDepth = 1, int currentDepth = 0)
+        {
+            ProcessRecipe(ref recipes);
+
+            foreach (var child in Children)
             {
-                foreach (var child in Children)
+                if (maxDepth == 0)
                 {
-                    child.ProcessRecipe(maxDepth, currentDepth + 1);
+                    child.ProcessRecipe(ref recipes, maxDepth);
+                }
+                if (currentDepth < maxDepth)
+                {
+                    child.ProcessRecipe(ref recipes, maxDepth, currentDepth + 1);
+                }
+            }
+
+            if (IsRoot)
+            {
+                Console.WriteLine($"Full crafting list: ");
+                Console.WriteLine($"{"Item",-40} Quantity");
+                foreach (var item in recipes)
+                {
+                    Console.WriteLine($"{item.Key, -40} {item.Value.Quantity}");
                 }
             }
         }
