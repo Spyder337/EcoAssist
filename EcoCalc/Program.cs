@@ -39,7 +39,7 @@ namespace EcoCalc
         {
             {"-a", 1},
             {"-rl", 1},
-            {"-md", 0}
+            {"-md", 1}
         };
 
         public static void Main(params string[] args)
@@ -61,7 +61,8 @@ namespace EcoCalc
             }
 
             RecipeManager.RecipeLevel = ArgValues["-rl"];
-            root = new RecipeTreeNode(RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[recipeName]), ArgValues["-a"]);
+            var recipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[recipeName]);
+            root = new RecipeTreeNode(recipe.MainProduct, ArgValues["-a"]);
             var condensedRecipes = new Dictionary<string, RecipeItem>();
             root.ProcessRecipe(ref condensedRecipes, ArgValues["-md"]);
         }
