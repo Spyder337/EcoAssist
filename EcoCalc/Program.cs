@@ -20,26 +20,29 @@ namespace EcoCalc
         {
             {"--amount", "-a"},
             {"--recipe-level", "-rl"},
-            {"--max-depth", "-md"}
+            {"--max-depth", "-md"},
+            {"--verbose", "-v"}
         };
         public static readonly Dictionary<string, string> AliasToRaw = new()
         {
             {"-a", "--amount"},
             {"-rl", "--recipe-level"},
-            {"-md", "--max-depth"}
+            {"-md", "--max-depth"},
+            {"-v", "--verbose"}
         };
         public static readonly Dictionary<string, int> NumofArgs = new()
         {
             {"-a", 1},
             {"-rl", 1},
-            {"-md", 1}
+            {"-md", 1},
+            {"-v", 1}
         };
-
         public static readonly Dictionary<string, int> ArgValues = new()
         {
             {"-a", 1},
             {"-rl", 1},
-            {"-md", 1}
+            {"-md", 1},
+            {"-v", 0}
         };
 
         public static void Main(params string[] args)
@@ -64,7 +67,7 @@ namespace EcoCalc
             var recipe = RecipeManager.GetActiveRecipe(RecipeManager.RecipesByName[recipeName]);
             root = new RecipeTreeNode(recipe.MainProduct, ArgValues["-a"]);
             var condensedRecipes = new Dictionary<string, RecipeItem>();
-            root.ProcessRecipe(ref condensedRecipes, ArgValues["-md"]);
+            root.ProcessRecipe(ref condensedRecipes, ArgValues["-md"], verbose: ArgValues["-v"] == 1);
         }
 
         private static void ParseArguments(string[] args)

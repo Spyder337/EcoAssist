@@ -5,7 +5,9 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcoRecipeLoader", "EcoRecipeLoader\EcoRecipeLoader.csproj", "{CF076FD9-21CF-424B-9646-042DC74E869C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcoCalc", "EcoCalc\EcoCalc.csproj", "{D600F50D-8E72-4199-9336-9A7A049E723B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EcoCalc", "EcoCalc\EcoCalc.csproj", "{D600F50D-8E72-4199-9336-9A7A049E723B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EcoCalc-GUI", "EcoCalc-GUI\EcoCalc-GUI.csproj", "{2C68D666-FBD3-4C42-8236-5BD129DC0DDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D600F50D-8E72-4199-9336-9A7A049E723B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D600F50D-8E72-4199-9336-9A7A049E723B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D600F50D-8E72-4199-9336-9A7A049E723B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C68D666-FBD3-4C42-8236-5BD129DC0DDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C68D666-FBD3-4C42-8236-5BD129DC0DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C68D666-FBD3-4C42-8236-5BD129DC0DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C68D666-FBD3-4C42-8236-5BD129DC0DDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
